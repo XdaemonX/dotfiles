@@ -1,0 +1,43 @@
+######################## COMMAND ALIASES ########################
+#   printSubviews - dump UI view on iOS application
+#   cpo - print object in objective c context
+#   reload_lldbinit - reload .lldbinit file
+#   cpx - print value in objective c context in hexadecimal 
+
+command alias -- printSubviews expression -l objc -O -- [[[[[UIApplication sharedApplication] keyWindow] rootViewController] view] recursiveDescription]
+command alias cpo expression -l objc -O --
+command alias reload_lldbinit command source ~/.lldbinit
+command alias -H "Print value in ObjC context in hexadecimal" -h "Print in hex" -- cpx expression -f x -l objc -- 
+
+####################### COMMAND REGEXES #########################
+#   google - search on Google in safari based on word; Usage: google UIApp
+#   conniPhone - connect to iPhone on port; Usage: conniPhone 6666
+#   rlook - search for method using regex
+#   tv - toogle view
+#   getcls - get class name
+#   mDesc - get object methods by calling _shortMethodDescription method 
+#   iDesc - get ivars from object by calling _ivarDescription
+#   flush - show ui change immediately
+#   nr - find next responder of object
+#   getType - print type of object in swift context
+#   changeText - change text property of object, by calling setText method
+
+command regex google 's/(.*)/script import os; os.system("open https:" + chr(47)*2 + "www.google.com" + chr(47) + "search?q=" + "%1")/'
+command regex conniPhone 's+(.*)+process connect connect://127.0.0.1:%1+'
+command regex rlook 's/(.+)/image lookup -rn %1/'
+command regex -- tv 's/(.+)/expression -l objc -O -- @import QuartzCore; [%1 setHidden:!(BOOL)[%1 isHidden]]; (void)[CATransaction flush];/'
+command regex getcls 's/(([0-9]|\$|\@|\[).*)/cpo [%1 class]/'
+command regex mDesc 's/(.*)/po [%1 _shortMethodDescription]/'
+command regex iDesc 's/(.*)/po [%1 _ivarDescription]/'
+command regex flush 's/(.*)/po %1 ; [CATransaction flush];/'
+command regex nr 's/(.*)/po [%1 nextResponder]/'
+command regex getType 's/(.*)/po type(of: %1)/'
+command regex -h "Change text of label, by calling setText method" -s "changeText 0xabcdabcd echo" changeText 's/([^ ]+) (.+)/po [%1 setText:@"%2"]; [CATransaction flush];/'
+
+# Script imports
+command script import ~/lldb_scripts/GetButtonMethod.py
+command script import ~/lldb_scripts/GetASLR.py
+
+# General settings
+settings set target.x86-disassembly-flavor intel
+settings set target.skip-prologue false
