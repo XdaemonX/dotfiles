@@ -22,7 +22,7 @@ command alias -H "Print value in ObjC context in hexadecimal" -h "Print in hex" 
 #   getType - print type of object in swift context
 #   changeText - change text property of object, by calling setText method
 
-command regex google 's/(.*)/script import os; os.system("open https:" + chr(47)*2 + "www.google.com" + chr(47) + "search?q=" + "%1")/'
+command regex google 's/(.*)/script import os; from urllib.parse import urlencode, quote_plus; query = urlencode({"q": "%1"}, quote_via=quote_plus);os.system("open https:" + chr(47)*2 + "www.google.com" + chr(47) + "search?" + query)/'
 command regex conniPhone 's+(.*)+process connect connect://127.0.0.1:%1+'
 command regex rlook 's/(.+)/image lookup -rn %1/'
 command regex -- tv 's/(.+)/expression -l objc -O -- @import QuartzCore; [%1 setHidden:!(BOOL)[%1 isHidden]]; (void)[CATransaction flush];/'
@@ -37,6 +37,7 @@ command regex -h "Change text of label, by calling setText method" -s "changeTex
 # Script imports
 command script import ~/lldb_scripts/GetButtonMethod.py
 command script import ~/lldb_scripts/GetASLR.py
+command script import ~/lldb_scripts/GetWatchpoint.py
 
 # General settings
 settings set target.x86-disassembly-flavor intel
