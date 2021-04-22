@@ -13,3 +13,7 @@ notify() {
 genpdf() {
 	pandoc "$1" --toc -o "$2"
 }
+
+md_chapters() {
+	grep '^#.*' "$1" | sed 's/\(##.*\)/\t\1/g' | grep '.*' --color
+}
